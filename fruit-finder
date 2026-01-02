@@ -16,7 +16,7 @@ local Window = Rayfield:CreateWindow({
 })
 
 local Tab = Window:CreateTab("Fruit", 4483362458) 
-local Section = Tab:CreateSection("Fruit Monitor & Auto Farm")
+local Section = Tab:CreateSection("Fruit Monitor & Auto Loop Fruit")
 
 -- Variable Control
 getgenv().AutoFarmFruit = false
