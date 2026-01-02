@@ -26,7 +26,7 @@ local function SystemNotify(title, text)
     StarterGui:SetCore("SendNotification", {
         Title = title;
         Text = text;
-        Duration = 5;
+        Duration = 15;
     })
 end
 
