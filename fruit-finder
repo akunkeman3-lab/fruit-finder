@@ -76,7 +76,7 @@ Workspace.ChildAdded:Connect(function(child)
 end)
 
 Tab:CreateToggle({
-   Name = "Aktifkan Monitor & Auto Teleport",
+   Name = "Auto Fruit Steel",
    CurrentValue = false,
    Flag = "AutoFruitGod", 
    Callback = function(Value)
