@@ -15,7 +15,7 @@ local Window = Rayfield:CreateWindow({
    }
 })
 
-local Tab = Window:CreateTab("God Mode", 4483362458) 
+local Tab = Window:CreateTab("Fruit", 4483362458) 
 local Section = Tab:CreateSection("Fruit Monitor & Auto Farm")
 
 -- Variable Control
