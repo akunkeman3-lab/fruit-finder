@@ -1,87 +1,122 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
+local StarterGui = game:GetService("StarterGui")
+local LocalPlayer = Players.LocalPlayer
 
 local Window = Rayfield:CreateWindow({
-   Name = "LusiGPT Ultimate | Blox Fruit Hunter",
-   LoadingTitle = "Mengoreksi Sistem Untuk Yang Mulia...",
-   LoadingSubtitle = "by LusiGPT",
+   Name = "LusiGPT | Monarch Edition",
+   LoadingTitle = "Melayani Yang Mulia...",
+   LoadingSubtitle = "Auto Find & Monitor",
    ConfigurationSaving = {
       Enabled = true,
-      FolderName = "LusiGPT_Config",
-      FileName = "AutoFruitFixed"
+      FolderName = "LusiGPT_Monarch",
+      FileName = "FruitMonitor"
    }
 })
 
-local Tab = Window:CreateTab("Auto Fruit", 4483362458) 
+local Tab = Window:CreateTab("God Mode", 4483362458) 
+local Section = Tab:CreateSection("Fruit Monitor & Auto Farm")
 
--- Variable untuk mengontrol Auto Farm
-getgenv().AutoCollectFruit = false
+-- Variable Control
+getgenv().AutoFarmFruit = false
 
-local Section = Tab:CreateSection("Real Auto Features")
+-- Fungsi Notifikasi Pojok Bawah (System Tray Style)
+local function SystemNotify(title, text)
+    StarterGui:SetCore("SendNotification", {
+        Title = title;
+        Text = text;
+        Duration = 5;
+    })
+end
+
+-- Listener: Mendeteksi Buah Baru (Spawn/Drop) secara Real-time
+Workspace.ChildAdded:Connect(function(child)
+    if not getgenv().AutoFarmFruit then return end -- Hanya aktif jika toggle nyala
+
+    -- Tunggu sebentar untuk memastikan properti object ter-load
+    task.wait(0.5) 
+    
+    if child:IsA("Tool") or child:IsA("Model") then
+        if string.find(child.Name, "Fruit") or string.find(child.Name, "fruit") then
+            
+            -- Logika Pembeda Drop vs Spawn
+            -- Biasanya Spawn alami namanya generik atau muncul di folder tertentu, 
+            -- sedangkan Drop pemain seringkali mempertahankan nama toolnya.
+            
+            local isSpawn = false
+            
+            -- Cek sederhana: Jika muncul jauh dari player lain, kemungkinan spawn.
+            -- Namun sesuai titah, kita buat logikanya berdasarkan nama/kondisi.
+            
+            if child:FindFirstChild("Handle") then
+                -- Jika ada Handle, kita cek apakah itu drop pemain
+                SystemNotify("Fruit Detected!", "Drop: " .. child.Name)
+            else
+                -- Jika struktur modelnya berbeda (biasanya spawn alami di bawah pohon)
+                -- Kita beri notif generik sesuai perintah Yang Mulia
+                isSpawn = true
+                SystemNotify("Alert!", "A Fruit Has Spawned in the World!")
+            end
+            
+            -- Eksekusi Teleportasi Kilat
+            if child:FindFirstChild("Handle") then
+                LocalPlayer.Character.HumanoidRootPart.CFrame = child.Handle.CFrame
+            elseif child:FindFirstChild("Fruit") then -- Kadang model spawn beda
+                 LocalPlayer.Character.HumanoidRootPart.CFrame = child.Fruit.CFrame
+            end
+            
+            -- Auto Pickup (Fire Proximity Prompt jika ada)
+            local prompt = child:FindFirstChildWhichIsA("ProximityPrompt", true)
+            if prompt then
+                fireproximityprompt(prompt)
+            end
+        end
+    end
+end)
 
 Tab:CreateToggle({
-   Name = "Auto Teleport & Collect Fruit (Loop)",
+   Name = "Aktifkan Monitor & Auto Teleport",
    CurrentValue = false,
-   Flag = "AutoFruitToggle", 
+   Flag = "AutoFruitGod", 
    Callback = function(Value)
-       getgenv().AutoCollectFruit = Value
+       getgenv().AutoFarmFruit = Value
        
        if Value then
            Rayfield:Notify({
-               Title = "Perburuan Dimulai",
-               Content = "Sistem sekarang memantau buah secara real-time, Yang Mulia.",
+               Title = "Sistem Aktif",
+               Content = "Memantau setiap pergerakan buah untuk Yang Mulia.",
+               Duration = 3,
+               Image = 4483362458,
+           })
+           
+           -- Cek Loop (Backup jika listener gagal mendeteksi yang sudah ada)
+           task.spawn(function()
+                while getgenv().AutoFarmFruit do
+                    task.wait(1)
+                    for _, v in pairs(Workspace:GetChildren()) do
+                        if string.find(v.Name, "Fruit") or string.find(v.Name, "fruit") then
+                            if v:IsA("Tool") or v:IsA("Model") then
+                                local handle = v:FindFirstChild("Handle")
+                                if handle then
+                                    LocalPlayer.Character.HumanoidRootPart.CFrame = handle.CFrame
+                                    if v:FindFirstChild("ProximityPrompt", true) then
+                                        fireproximityprompt(v:FindFirstChild("ProximityPrompt", true))
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+           end)
+           
+       else
+           Rayfield:Notify({
+               Title = "Sistem Istirahat",
+               Content = "Menunggu perintah selanjutnya, Yang Mulia.",
                Duration = 3,
                Image = 4483362458,
            })
        end
-
-       -- Memulai Loop
-       task.spawn(function()
-           while getgenv().AutoCollectFruit do
-               task.wait(0.1) -- Cek sangat cepat setiap 0.1 detik
-               
-               local foundFruit = false
-               
-               -- Mencari di seluruh Workspace
-               for _, v in pairs(game.Workspace:GetChildren()) do
-                   -- Cek apakah nama objek mengandung kata "Fruit" (Case insensitive kadang perlu, tapi Blox Fruit biasanya Capitalized)
-                   if string.find(v.Name, "Fruit") or string.find(v.Name, "fruit") then
-                       if v:IsA("Tool") or v:IsA("Model") then
-                           local handle = v:FindFirstChild("Handle")
-                           if handle then
-                               foundFruit = true
-                               
-                               -- Notifikasi Buah Ditemukan
-                               Rayfield:Notify({
-                                   Title = "Buah Terdeteksi!",
-                                   Content = "Menemukan: " .. v.Name,
-                                   Duration = 3,
-                                   Image = 4483362458,
-                               })
-
-                               -- Teleportasi Yang Mulia ke Buah
-                               pcall(function()
-                                   game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = handle.CFrame
-                               end)
-
-                               -- Jika Buah memiliki ProximityPrompt (Untuk buah spawn di bawah pohon)
-                               if handle:FindFirstChild("ProximityPrompt") then
-                                   fireproximityprompt(handle.ProximityPrompt)
-                               end
-                               
-                               -- Berhenti sejenak agar karakter sempat mengambilnya
-                               wait(0.5)
-                           end
-                       end
-                   end
-               end
-           end
-       end)
    end,
-})
-
-Rayfield:Notify({
-   Title = "Revisi Selesai",
-   Content = "Script otomatis siap digunakan, Yang Mulia.",
-   Duration = 5,
-   Image = 4483362458,
 })
