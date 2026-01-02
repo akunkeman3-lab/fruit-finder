@@ -5,8 +5,8 @@ local StarterGui = game:GetService("StarterGui")
 local LocalPlayer = Players.LocalPlayer
 
 local Window = Rayfield:CreateWindow({
-   Name = "LusiGPT | Monarch Edition",
-   LoadingTitle = "Melayani Yang Mulia...",
+   Name = "Monarch Finder",
+   LoadingTitle = "Wait....",
    LoadingSubtitle = "Auto Find & Monitor",
    ConfigurationSaving = {
       Enabled = true,
