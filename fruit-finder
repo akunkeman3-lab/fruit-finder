@@ -76,7 +76,7 @@ Workspace.ChildAdded:Connect(function(child)
 end)
 
 Tab:CreateToggle({
-   Name = "Auto Fruit Steel",
+   Name = "Auto Steel Fruit",
    CurrentValue = false,
    Flag = "AutoFruitGod", 
    Callback = function(Value)
