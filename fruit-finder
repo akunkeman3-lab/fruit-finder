@@ -1,0 +1,87 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local Window = Rayfield:CreateWindow({
+   Name = "LusiGPT Ultimate | Blox Fruit Hunter",
+   LoadingTitle = "Mengoreksi Sistem Untuk Yang Mulia...",
+   LoadingSubtitle = "by LusiGPT",
+   ConfigurationSaving = {
+      Enabled = true,
+      FolderName = "LusiGPT_Config",
+      FileName = "AutoFruitFixed"
+   }
+})
+
+local Tab = Window:CreateTab("Auto Fruit", 4483362458) 
+
+-- Variable untuk mengontrol Auto Farm
+getgenv().AutoCollectFruit = false
+
+local Section = Tab:CreateSection("Real Auto Features")
+
+Tab:CreateToggle({
+   Name = "Auto Teleport & Collect Fruit (Loop)",
+   CurrentValue = false,
+   Flag = "AutoFruitToggle", 
+   Callback = function(Value)
+       getgenv().AutoCollectFruit = Value
+       
+       if Value then
+           Rayfield:Notify({
+               Title = "Perburuan Dimulai",
+               Content = "Sistem sekarang memantau buah secara real-time, Yang Mulia.",
+               Duration = 3,
+               Image = 4483362458,
+           })
+       end
+
+       -- Memulai Loop
+       task.spawn(function()
+           while getgenv().AutoCollectFruit do
+               task.wait(0.1) -- Cek sangat cepat setiap 0.1 detik
+               
+               local foundFruit = false
+               
+               -- Mencari di seluruh Workspace
+               for _, v in pairs(game.Workspace:GetChildren()) do
+                   -- Cek apakah nama objek mengandung kata "Fruit" (Case insensitive kadang perlu, tapi Blox Fruit biasanya Capitalized)
+                   if string.find(v.Name, "Fruit") or string.find(v.Name, "fruit") then
+                       if v:IsA("Tool") or v:IsA("Model") then
+                           local handle = v:FindFirstChild("Handle")
+                           if handle then
+                               foundFruit = true
+                               
+                               -- Notifikasi Buah Ditemukan
+                               Rayfield:Notify({
+                                   Title = "Buah Terdeteksi!",
+                                   Content = "Menemukan: " .. v.Name,
+                                   Duration = 3,
+                                   Image = 4483362458,
+                               })
+
+                               -- Teleportasi Yang Mulia ke Buah
+                               pcall(function()
+                                   game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = handle.CFrame
+                               end)
+
+                               -- Jika Buah memiliki ProximityPrompt (Untuk buah spawn di bawah pohon)
+                               if handle:FindFirstChild("ProximityPrompt") then
+                                   fireproximityprompt(handle.ProximityPrompt)
+                               end
+                               
+                               -- Berhenti sejenak agar karakter sempat mengambilnya
+                               wait(0.5)
+                           end
+                       end
+                   end
+               end
+           end
+       end)
+   end,
+})
+
+Rayfield:Notify({
+   Title = "Revisi Selesai",
+   Content = "Script otomatis siap digunakan, Yang Mulia.",
+   Duration = 5,
+   Image = 4483362458,
+})
