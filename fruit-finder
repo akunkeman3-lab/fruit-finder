@@ -5,8 +5,8 @@ local StarterGui = game:GetService("StarterGui")
 local LocalPlayer = Players.LocalPlayer
 
 local Window = Rayfield:CreateWindow({
-   Name = "Monarch Finder",
-   LoadingTitle = "Wait....",
+   Name = "LusiGPT | Monarch Edition",
+   LoadingTitle = "Melayani Yang Mulia...",
    LoadingSubtitle = "Auto Find & Monitor",
    ConfigurationSaving = {
       Enabled = true,
@@ -15,8 +15,8 @@ local Window = Rayfield:CreateWindow({
    }
 })
 
-local Tab = Window:CreateTab("Fruit", 4483362458) 
-local Section = Tab:CreateSection("Fruit Monitor & Auto Loop Fruit")
+local Tab = Window:CreateTab("God Mode", 4483362458) 
+local Section = Tab:CreateSection("Fruit Monitor & Auto Farm")
 
 -- Variable Control
 getgenv().AutoFarmFruit = false
@@ -26,7 +26,7 @@ local function SystemNotify(title, text)
     StarterGui:SetCore("SendNotification", {
         Title = title;
         Text = text;
-        Duration = 15;
+        Duration = 5;
     })
 end
 
@@ -76,7 +76,7 @@ Workspace.ChildAdded:Connect(function(child)
 end)
 
 Tab:CreateToggle({
-   Name = "Auto Steal Fruit",
+   Name = "Aktifkan Monitor & Auto Teleport",
    CurrentValue = false,
    Flag = "AutoFruitGod", 
    Callback = function(Value)
